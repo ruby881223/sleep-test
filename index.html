@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>身心健康評估系統（PSQI + GDS-15）</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    body {
+      font-family: "Microsoft JhengHei", Arial, sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 20px;
+      color: #1f2d3d;
+      line-height: 1.8;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    .question {
+      margin-bottom: 22px;
+    }
+    .muted {
+      color: #5b6b7a;
+      font-size: 15px;
+    }
+    .required {
+      color: #d63031;
+      font-weight: bold;
+    }
+    .options label {
+      display: inline-block;
+      margin-right: 18px;
+      margin-top: 8px;
+    }
+    input[type="number"],
+    input[type="time"],
+    textarea {
+      width: 100%;
+      max-width: 420px;
+      padding: 10px;
+      font-size: 17px;
+      border: 1px solid #cfd8e3;
+      border-radius: 10px;
+      box-sizing: border-box;
+    }
+    textarea {
+      max-width: 100%;
+      min-height: 80px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 17px;
+      cursor: pointer;
+      background: #2f80ed;
+      color: #fff;
+    }
+    button.secondary {
+      background: #7f8fa6;
+    }
+    .risk-green {
+      color: #1e8449;
+      font-weight: bold;
+    }
+    .risk-yellow {
+      color: #b9770e;
+      font-weight: bold;
+    }
+    .risk-red {
+      color: #c0392b;
+      font-weight: bold;
+    }
+    .result-box {
+      font-size: 18px;
+      line-height: 1.9;
+    }
+    hr {
+      margin: 24px 0;
+      border: 0;
+      border-top: 1px solid #dfe6ee;
+    }
+    @media (max-width: 700px) {
+      button {
+        width: 100%;
+      }
+      .options label {
+        display: block;
+        margin-right: 0;
+      }
+      input[type="number"],
+      input[type="time"],
+      textarea {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="card">
+      <h1>身心健康評估系統</h1>
+      <div class="muted">包含匹茲堡睡眠品質問卷（PSQI）與老年憂鬱量表（GDS-15）</div>
+      <div class="muted">本結果僅供健康篩檢與衛教參考，非正式醫療診斷。</div>
+      <div id="qrcode" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- PAGE 1 -->
+    <div class="card page active" id="page1">
+      <h2>第 1 頁｜基本資料與睡眠時間</h2>
+
+      <div class="question">
+        <div>年齡 <span class="required">*</span></div>
+        <input type="number" id="age" min="1" max="120">
+      </div>
+
+      <div class="question">
+        <div>Q1. 過去一個月，您晚上通常幾點上床睡覺？ <span class="required">*</span></div>
+        <input type="time" id="q1">
+      </div>
+
+      <div class="question">
+        <div>Q2. 過去一個月，您每晚通常需要花多少時間（以分鐘計算）才能入睡？ <span class="required">*</span></div>
+        <input type="number" id="q2" min="0">
+      </div>
+
+      <div class="question">
+        <div>Q3. 過去一個月，您早上通常幾點起床？ <span class="required">*</span></div>
+        <input type="time" id="q3">
+      </div>
+
+      <div class="question">
+        <div>Q4. 過去一個月，您晚上真正睡著的時間有幾小時？（這可能與您躺在床上所花的時數不同。） <span class="required">*</span></div>
+        <input type="number" id="q4" min="0" step="0.5">
+      </div>
+
+      <div class="btn-row">
+        <button onclick="showPage(2)">下一頁</button>
+      </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="card page" id="page2">
+      <h2>第 2 頁｜Q5 睡眠困擾</h2>
+      <div class="muted">請分別勾選一個最符合的答案。</div>
+
+      <div class="question">
+        <div>Q5a. 過去一個月，您是否曾因「無法在 30 分鐘內入睡」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5a" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5a" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5a" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5a" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5b. 過去一個月，您是否曾因「在半夜或凌晨醒來」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5b" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5b" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5b" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5b" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5c. 過去一個月，您是否曾因「必須起來上廁所」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5c" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5c" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5c" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5c" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5d. 過去一個月，您是否曾因「無法順暢呼吸」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5d" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5d" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5d" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5d" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5e. 過去一個月，您是否曾因「大聲咳嗽或打呼」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5e" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5e" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5e" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5e" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5f. 過去一個月，您是否曾因「覺得太冷」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5f" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5f" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5f" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5f" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5g. 過去一個月，您是否曾因「覺得太熱」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5g" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5g" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5g" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5g" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5h. 過去一個月，您是否曾因「做惡夢」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5h" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5h" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5h" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5h" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5i. 過去一個月，您是否曾因「有疼痛」而影響睡眠？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q5i" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5i" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5i" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5i" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q5j. 過去一個月，您是否曾因「其他原因」而影響睡眠？ <span class="required">*</span></div>
+        <textarea id="q5j_text" placeholder="若有其他原因可填寫，沒有可空白"></textarea>
+        <div class="options">
+          <label><input type="radio" name="q5j" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q5j" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q5j" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q5j" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="secondary" onclick="showPage(1)">上一頁</button>
+        <button onclick="showPage(3)">下一頁</button>
+      </div>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="card page" id="page3">
+      <h2>第 3 頁｜整體睡眠與日間功能</h2>
+
+      <div class="question">
+        <div>Q6. 過去一個月，您覺得您的整體睡眠品質如何？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q6" value="0"> 非常好</label>
+          <label><input type="radio" name="q6" value="1"> 還不錯</label>
+          <label><input type="radio" name="q6" value="2"> 不太好</label>
+          <label><input type="radio" name="q6" value="3"> 非常不好</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q7. 過去一個月，您服用藥物幫助睡眠的頻率有多少？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q7" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q7" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q7" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q7" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q8. 過去一個月，您在開車、吃飯或參與社交活動時，難以保持清醒的頻率有多少？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q8" value="0"> 過去一個月都沒有</label>
+          <label><input type="radio" name="q8" value="1"> 一星期少於一次</label>
+          <label><input type="radio" name="q8" value="2"> 一星期一或二次</label>
+          <label><input type="radio" name="q8" value="3"> 一星期三次以上</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <div>Q9. 過去一個月，您要保持足夠動力把事情做完有多少困難？ <span class="required">*</span></div>
+        <div class="options">
+          <label><input type="radio" name="q9" value="0"> 完全沒有困難</label>
+          <label><input type="radio" name="q9" value="1"> 只有一點困難</label>
+          <label><input type="radio" name="q9" value="2"> 有些困難</label>
+          <label><input type="radio" name="q9" value="3"> 非常困難</label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="secondary" onclick="showPage(2)">上一頁</button>
+        <button onclick="showPage(4)">下一頁</button>
+      </div>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="card page" id="page4">
+      <h2>第 4 頁｜老年憂鬱量表（GDS-15）</h2>
+      <div class="muted">請根據最近一週內的感受回答。</div>
+
+      <div class="question"><div>1. 基本上，您對您的生活滿意嗎？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_0" value="yes"> 是</label><label><input type="radio" name="gds_0" value="no"> 否</label></div></div>
+      <div class="question"><div>2. 您是否減少很多活動和興趣的事？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_1" value="yes"> 是</label><label><input type="radio" name="gds_1" value="no"> 否</label></div></div>
+      <div class="question"><div>3. 您是否覺得您的生活很空虛？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_2" value="yes"> 是</label><label><input type="radio" name="gds_2" value="no"> 否</label></div></div>
+      <div class="question"><div>4. 您是否常常感到厭煩？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_3" value="yes"> 是</label><label><input type="radio" name="gds_3" value="no"> 否</label></div></div>
+      <div class="question"><div>5. 您是否大部分時間精神都很好？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_4" value="yes"> 是</label><label><input type="radio" name="gds_4" value="no"> 否</label></div></div>
+      <div class="question"><div>6. 您是否常常害怕將有不幸的事情發生在您身上嗎？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_5" value="yes"> 是</label><label><input type="radio" name="gds_5" value="no"> 否</label></div></div>
+      <div class="question"><div>7. 您是否大部分的時間都感到快樂？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_6" value="yes"> 是</label><label><input type="radio" name="gds_6" value="no"> 否</label></div></div>
+      <div class="question"><div>8. 您是否常常感到無論做什麼事，都沒有用？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_7" value="yes"> 是</label><label><input type="radio" name="gds_7" value="no"> 否</label></div></div>
+      <div class="question"><div>9. 您是否比較喜歡待在家裡而較不喜歡外出及做新的事？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_8" value="yes"> 是</label><label><input type="radio" name="gds_8" value="no"> 否</label></div></div>
+      <div class="question"><div>10. 您是否覺得現在有記憶力不好的困擾？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_9" value="yes"> 是</label><label><input type="radio" name="gds_9" value="no"> 否</label></div></div>
+      <div class="question"><div>11. 您是否覺得「現在還能活著」是很好的事？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_10" value="yes"> 是</label><label><input type="radio" name="gds_10" value="no"> 否</label></div></div>
+      <div class="question"><div>12. 您是否覺得您現在活得很沒有價值？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_11" value="yes"> 是</label><label><input type="radio" name="gds_11" value="no"> 否</label></div></div>
+      <div class="question"><div>13. 您是否覺得精力很充沛？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_12" value="yes"> 是</label><label><input type="radio" name="gds_12" value="no"> 否</label></div></div>
+      <div class="question"><div>14. 您是否感覺您現在的情況是沒有希望的？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_13" value="yes"> 是</label><label><input type="radio" name="gds_13" value="no"> 否</label></div></div>
+      <div class="question"><div>15. 您是否覺得大部分的人都比您更幸福？ <span class="required">*</span></div><div class="options"><label><input type="radio" name="gds_14" value="yes"> 是</label><label><input type="radio" name="gds_14" value="no"> 否</label></div></div>
+
+      <div class="btn-row">
+        <button class="secondary" onclick="showPage(3)">上一頁</button>
+        <button onclick="calculateAll()">計算結果</button>
+      </div>
+    </div>
+
+    <!-- PAGE 5 -->
+    <div class="card page" id="page5">
+      <h2>評估結果</h2>
+      <div id="result" class="result-box"></div>
+    </div>
+  </div>
+
+  <script>
+    new QRCode(document.getElementById("qrcode"), {
+      text: window.location.href,
+      width: 140,
+      height: 140
+    });
+
+    function showPage(pageNum) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById("page" + pageNum).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function getRadioValue(name) {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      return checked ? checked.value : null;
+    }
+
+    function validateAll() {
+      const requiredIds = ["age", "q1", "q2", "q3", "q4"];
+      for (const id of requiredIds) {
+        if (!document.getElementById(id).value) {
+          alert("請完成所有必填題目。");
+          return false;
+        }
+      }
+
+      const psqiNames = ["q5a","q5b","q5c","q5d","q5e","q5f","q5g","q5h","q5i","q5j","q6","q7","q8","q9"];
+      for (const name of psqiNames) {
+        if (getRadioValue(name) === null) {
+          alert("請完成所有 PSQI 題目。");
+          return false;
+        }
+      }
+
+      for (let i = 0; i < 15; i++) {
+        if (getRadioValue("gds_" + i) === null) {
+          alert("請完成所有 GDS-15 題目。");
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function calculateAll() {
+      if (!validateAll()) return;
+
+      const age = parseInt(document.getElementById("age").value, 10);
+      const q1 = document.getElementById("q1").value;
+      const q2 = parseFloat(document.getElementById("q2").value);
+      const q3 = document.getElementById("q3").value;
+      const q4 = parseFloat(document.getElementById("q4").value);
+
+      const q5a = parseInt(getRadioValue("q5a"), 10);
+      const q5b = parseInt(getRadioValue("q5b"), 10);
+      const q5c = parseInt(getRadioValue("q5c"), 10);
+      const q5d = parseInt(getRadioValue("q5d"), 10);
+      const q5e = parseInt(getRadioValue("q5e"), 10);
+      const q5f = parseInt(getRadioValue("q5f"), 10);
+      const q5g = parseInt(getRadioValue("q5g"), 10);
+      const q5h = parseInt(getRadioValue("q5h"), 10);
+      const q5i = parseInt(getRadioValue("q5i"), 10);
+      const q5j = parseInt(getRadioValue("q5j"), 10);
+
+      const q6 = parseInt(getRadioValue("q6"), 10);
+      const q7 = parseInt(getRadioValue("q7"), 10);
+      const q8 = parseInt(getRadioValue("q8"), 10);
+      const q9 = parseInt(getRadioValue("q9"), 10);
+
+      // C1
+      const c1 = q6;
+
+      // C2
+      let q2new;
+      if (q2 <= 15) {
+        q2new = 0;
+      } else if (q2 <= 30) {
+        q2new = 1;
+      } else if (q2 <= 60) {
+        q2new = 2;
+      } else {
+        q2new = 3;
+      }
+
+      const latencySum = q2new + q5a;
+      let c2;
+      if (latencySum === 0) {
+        c2 = 0;
+      } else if (latencySum <= 2) {
+        c2 = 1;
+      } else if (latencySum <= 4) {
+        c2 = 2;
+      } else {
+        c2 = 3;
+      }
+
+      // C3
+      let c3;
+      if (q4 >= 7) {
+        c3 = 0;
+      } else if (q4 >= 6) {
+        c3 = 1;
+      } else if (q4 >= 5) {
+        c3 = 2;
+      } else {
+        c3 = 3;
+      }
+
+      // C4
+      let bedTime = new Date("2020-01-01T" + q1);
+      let wakeTime = new Date("2020-01-01T" + q3);
+      if (wakeTime <= bedTime) {
+        wakeTime.setDate(wakeTime.getDate() + 1);
+      }
+
+      const diffMs = wakeTime - bedTime;
+      const hoursInBed = diffMs / 3600000; // 毫秒轉小時
+      const sleepEfficiency = (q4 / hoursInBed) * 100;
+
+      let c4;
+      if (sleepEfficiency >= 85) {
+        c4 = 0;
+      } else if (sleepEfficiency >= 75) {
+        c4 = 1;
+      } else if (sleepEfficiency >= 65) {
+        c4 = 2;
+      } else {
+        c4 = 3;
+      }
+
+      // C5
+      const disturbanceSum = q5b + q5c + q5d + q5e + q5f + q5g + q5h + q5i + q5j;
+      let c5;
+      if (disturbanceSum === 0) {
+        c5 = 0;
+      } else if (disturbanceSum <= 9) {
+        c5 = 1;
+      } else if (disturbanceSum <= 18) {
+        c5 = 2;
+      } else {
+        c5 = 3;
+      }
+
+      // C6
+      const c6 = q7;
+
+      // C7
+      const dysfunctionSum = q8 + q9;
+      let c7;
+      if (dysfunctionSum === 0) {
+        c7 = 0;
+      } else if (dysfunctionSum <= 2) {
+        c7 = 1;
+      } else if (dysfunctionSum <= 4) {
+        c7 = 2;
+      } else {
+        c7 = 3;
+      }
+
+      const psqiTotal = c1 + c2 + c3 + c4 + c5 + c6 + c7;
+
+      // GDS
+      const reverse = [0, 4, 6, 10, 12];
+      let gdsTotal = 0;
+
+      for (let i = 0; i < 15; i++) {
+        const ans = getRadioValue("gds_" + i);
+        let score;
+
+        if (reverse.includes(i)) {
+          if (ans === "yes") {
+            score = 0;
+          } else {
+            score = 1;
+          }
+        } else {
+          if (ans === "yes") {
+            score = 1;
+          } else {
+            score = 0;
+          }
+        }
+
+        gdsTotal += score;
+      }
+
+      let sleepClass, sleepCss;
+      if (psqiTotal <= 5) {
+        sleepClass = "睡眠良好";
+        sleepCss = "risk-green";
+      } else if (psqiTotal <= 10) {
+        sleepClass = "睡眠需注意";
+        sleepCss = "risk-yellow";
+      } else {
+        sleepClass = "睡眠高風險";
+        sleepCss = "risk-red";
+      }
+
+      let gdsClass, gdsCss;
+      if (gdsTotal <= 4) {
+        gdsClass = "情緒狀態大致正常";
+        gdsCss = "risk-green";
+      } else if (gdsTotal <= 8) {
+        gdsClass = "有輕度憂鬱風險";
+        gdsCss = "risk-yellow";
+      } else {
+        gdsClass = "有明顯憂鬱風險";
+        gdsCss = "risk-red";
+      }
+
+      let advice = [];
+      if (psqiTotal > 5) {
+        advice.push("建議維持規律作息，固定上床與起床時間。");
+        advice.push("睡前避免咖啡、濃茶、酒精與長時間使用手機。");
+      } else {
+        advice.push("目前睡眠狀況尚可，請持續維持良好作息。");
+      }
+
+      if (gdsTotal >= 5) {
+        advice.push("建議多與家人朋友互動，維持社交支持。");
+        advice.push("若情緒低落持續，建議尋求心理諮詢或就醫評估。");
+      } else {
+        advice.push("目前情緒狀況尚穩定，可持續保持規律生活與活動。");
+      }
+
+      if (psqiTotal > 5 && gdsTotal >= 5) {
+        advice.push("睡眠與情緒皆有風險，建議儘早尋求專業協助。");
+      }
+
+      document.getElementById("result").innerHTML = `
+        <div><strong>年齡：</strong>${age}</div>
+        <div><strong>PSQI 總分：</strong>${psqiTotal}　<span class="${sleepCss}">${sleepClass}</span></div>
+        <div><strong>GDS-15 分數：</strong>${gdsTotal}　<span class="${gdsCss}">${gdsClass}</span></div>
+        <div><strong>睡眠效率：</strong>${sleepEfficiency.toFixed(1)}%</div>
+        <hr>
+        <div><strong>PSQI 7 構面：</strong></div>
+        <div>C1 主觀睡眠品質：${c1}</div>
+        <div>C2 入睡時間：${c2}</div>
+        <div>C3 睡眠時數：${c3}</div>
+        <div>C4 睡眠效率：${c4}</div>
+        <div>C5 睡眠干擾：${c5}</div>
+        <div>C6 睡眠藥物：${c6}</div>
+        <div>C7 日間功能：${c7}</div>
+        <hr>
+        <div><strong>衛教建議：</strong></div>
+        <ul>${advice.map(x => `<li>${x}</li>`).join("")}</ul>
+      `;
+
+      // Google Sheet upload
+      const scriptURL = "https://script.google.com/macros/s/AKfycbzpgAToLBHhioPmvNnFcRHj_myzT4MyxMoxOh9QqlrBgaTd6OI1RsgaapDf6Rfdx5EF/exec";
+
+ if (scriptURL && !scriptURL.includes("把你的")) {
+        fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify({
+            createdAt: new Date().toISOString(),
+            age: age,
+            psqi: psqiTotal,
+            gds: gdsTotal,
+            c1: c1,
+            c2: c2,
+            c3: c3,
+            c4: c4,
+            c5: c5,
+            c6: c6,
+            c7: c7,
+            sleepEfficiency: sleepEfficiency.toFixed(1),
+            sleepClass: sleepClass,
+            gdsClass: gdsClass
+          })
+        }).catch(err => console.log("上傳失敗：", err));
+      }
+
+      showPage(5);
+    }  </script>
+</body>
+</html>
