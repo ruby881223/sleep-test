@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>身心健康評估系統（PSQI + GDS-15）</title>
@@ -354,11 +355,15 @@
         <button onclick="calculateAll()">計算結果</button>
       </div>
     </div>
-
+    
     <!-- PAGE 5 -->
     <div class="card page" id="page5">
       <h2>評估結果</h2>
       <div id="result" class="result-box"></div>
+      <div style="margin-top:20px;">
+  <h3>睡眠品質雷達圖</h3>
+  <canvas id="radarChart"></canvas>
+</div>
     </div>
   </div>
 
@@ -548,6 +553,19 @@
 
         gdsTotal += score;
       }
+      // 雷達圖（放在這裡）
+
+  options: {
+    scales: {
+      r: {
+        suggestedMin: 0,
+        suggestedMax: 3,
+        ticks: { stepSize: 1 }
+      }
+    }
+  }
+});
+
 
       let sleepClass, sleepCss;
       if (psqiTotal <= 5) {
@@ -610,6 +628,7 @@
         <div><strong>衛教建議：</strong></div>
         <ul>${advice.map(x => `<li>${x}</li>`).join("")}</ul>
       `;
+      
 
       // Google Sheet upload
       const scriptURL = "https://script.google.com/macros/s/AKfycbzpgAToLBHhioPmvNnFcRHj_myzT4MyxMoxOh9QqlrBgaTd6OI1RsgaapDf6Rfdx5EF/exec";
@@ -637,6 +656,33 @@
       }
 
       showPage(5);
+    const ctx = document.getElementById("radarChart").getContext("2d");
+
+if (window.radarChartInstance) {
+  window.radarChartInstance.destroy();
+}
+
+window.radarChartInstance = new Chart(ctx, {
+  type: 'radar',
+  data: {
+    labels: [
+      '主觀睡眠品質',
+      '入睡時間',
+      '睡眠時間',
+      '睡眠效率',
+      '睡眠困擾',
+      '安眠藥使用',
+      '日間功能'
+    ],
+    datasets: [{
+      label: 'PSQI 各構面分數',
+      data: [c1, c2, c3, c4, c5, c6, c7],
+      fill: true,
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+    }]
+  },
     }  </script>
 </body>
 </html>
