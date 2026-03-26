@@ -614,7 +614,7 @@
       // Google Sheet upload
       const scriptURL = "https://script.google.com/macros/s/AKfycbzpgAToLBHhioPmvNnFcRHj_myzT4MyxMoxOh9QqlrBgaTd6OI1RsgaapDf6Rfdx5EF/exec";
 
- if (scriptURL && !scriptURL.includes("把你的")) {
+if (scriptURL && !scriptURL.includes("把你的")) {
   fetch(scriptURL, {
     method: "POST",
     mode: "no-cors",
@@ -637,8 +637,8 @@
   })
   .then(() => console.log("已送出"))
   .catch(err => console.error("錯誤：", err));
-} // ⭐⭐⭐這個很重要！！！！
-    
+}
+}
 
 
 </script>
