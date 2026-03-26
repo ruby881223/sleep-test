@@ -610,38 +610,33 @@
         <div><strong>衛教建議：</strong></div>
         <ul>${advice.map(x => `<li>${x}</li>`).join("")}</ul>
       `;
-      showPage(5);
 
       // Google Sheet upload
       const scriptURL = "https://script.google.com/macros/s/AKfycbzpgAToLBHhioPmvNnFcRHj_myzT4MyxMoxOh9QqlrBgaTd6OI1RsgaapDf6Rfdx5EF/exec";
 
-if (scriptURL && !scriptURL.includes("把你的")) {
-  fetch(scriptURL, {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify({
-      createdAt: new Date().toISOString(),
-      age: age,
-      psqi: psqiTotal,
-      gds: gdsTotal,
-      c1: c1,
-      c2: c2,
-      c3: c3,
-      c4: c4,
-      c5: c5,
-      c6: c6,
-      c7: c7,
-      sleepEfficiency: sleepEfficiency.toFixed(1),
-      sleepClass: sleepClass,
-      gdsClass: gdsClass
-    })
-  })
-  .then(() => console.log("已送出"))
-  .catch(err => console.error("錯誤：", err));
-}
-}
+ if (scriptURL && !scriptURL.includes("把你的")) {
+        fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify({
+            createdAt: new Date().toISOString(),
+            age: age,
+            psqi: psqiTotal,
+            gds: gdsTotal,
+            c1: c1,
+            c2: c2,
+            c3: c3,
+            c4: c4,
+            c5: c5,
+            c6: c6,
+            c7: c7,
+            sleepEfficiency: sleepEfficiency.toFixed(1),
+            sleepClass: sleepClass,
+            gdsClass: gdsClass
+          })
+        }).catch(err => console.log("上傳失敗：", err));
+      }
 
-
-</script>
+      showPage(5);
+    }  </script>
 </body>
 </html>
