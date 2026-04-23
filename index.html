@@ -410,206 +410,263 @@
     function calculateAll() {
       if (!validateAll()) return;
 
-      const age = parseInt(document.getElementById("age").value, 10);
-      const q1 = document.getElementById("q1").value;
-      const q2 = parseFloat(document.getElementById("q2").value);
-      const q3 = document.getElementById("q3").value;
-      const q4 = parseFloat(document.getElementById("q4").value);
+        const age = parseInt(document.getElementById("age").value, 10);
+  const q1 = document.getElementById("q1").value;
+  const q2 = parseFloat(document.getElementById("q2").value);
+  const q3 = document.getElementById("q3").value;
+  const q4 = parseFloat(document.getElementById("q4").value);
+  const q5j_text = document.getElementById("q5j_text").value.trim();
 
-      const q5a = parseInt(getRadioValue("q5a"), 10);
-      const q5b = parseInt(getRadioValue("q5b"), 10);
-      const q5c = parseInt(getRadioValue("q5c"), 10);
-      const q5d = parseInt(getRadioValue("q5d"), 10);
-      const q5e = parseInt(getRadioValue("q5e"), 10);
-      const q5f = parseInt(getRadioValue("q5f"), 10);
-      const q5g = parseInt(getRadioValue("q5g"), 10);
-      const q5h = parseInt(getRadioValue("q5h"), 10);
-      const q5i = parseInt(getRadioValue("q5i"), 10);
-      const q5j = parseInt(getRadioValue("q5j"), 10);
+  const q5a = parseInt(getRadioValue("q5a"), 10);
+  const q5b = parseInt(getRadioValue("q5b"), 10);
+  const q5c = parseInt(getRadioValue("q5c"), 10);
+  const q5d = parseInt(getRadioValue("q5d"), 10);
+  const q5e = parseInt(getRadioValue("q5e"), 10);
+  const q5f = parseInt(getRadioValue("q5f"), 10);
+  const q5g = parseInt(getRadioValue("q5g"), 10);
+  const q5h = parseInt(getRadioValue("q5h"), 10);
+  const q5i = parseInt(getRadioValue("q5i"), 10);
+  const q5j = parseInt(getRadioValue("q5j"), 10);
 
-      const q6 = parseInt(getRadioValue("q6"), 10);
-      const q7 = parseInt(getRadioValue("q7"), 10);
-      const q8 = parseInt(getRadioValue("q8"), 10);
-      const q9 = parseInt(getRadioValue("q9"), 10);
+  const q6 = parseInt(getRadioValue("q6"), 10);
+  const q7 = parseInt(getRadioValue("q7"), 10);
+  const q8 = parseInt(getRadioValue("q8"), 10);
+  const q9 = parseInt(getRadioValue("q9"), 10);
 
-      // C1
-      const c1 = q6;
+  function freqText(v) {
+    if (v === 0) return "過去一個月都沒有";
+    if (v === 1) return "一星期少於一次";
+    if (v === 2) return "一星期一或二次";
+    return "一星期三次以上";
+  }
 
-      // C2
-      let q2new;
-      if (q2 <= 15) {
-        q2new = 0;
-      } else if (q2 <= 30) {
-        q2new = 1;
-      } else if (q2 <= 60) {
-        q2new = 2;
-      } else {
-        q2new = 3;
-      }
+  function q6Text(v) {
+    if (v === 0) return "非常好";
+    if (v === 1) return "還不錯";
+    if (v === 2) return "不太好";
+    return "非常不好";
+  }
 
-      const latencySum = q2new + q5a;
-      let c2;
-      if (latencySum === 0) {
-        c2 = 0;
-      } else if (latencySum <= 2) {
-        c2 = 1;
-      } else if (latencySum <= 4) {
-        c2 = 2;
-      } else {
-        c2 = 3;
-      }
+  function q9Text(v) {
+    if (v === 0) return "完全沒有困難";
+    if (v === 1) return "只有一點困難";
+    if (v === 2) return "有些困難";
+    return "非常困難";
+  }
 
-      // C3
-      let c3;
-      if (q4 >= 7) {
-        c3 = 0;
-      } else if (q4 >= 6) {
-        c3 = 1;
-      } else if (q4 >= 5) {
-        c3 = 2;
-      } else {
-        c3 = 3;
-      }
+  // C1
+  const c1 = q6;
 
-      // C4
-      let bedTime = new Date("2020-01-01T" + q1);
-      let wakeTime = new Date("2020-01-01T" + q3);
-      if (wakeTime <= bedTime) {
-        wakeTime.setDate(wakeTime.getDate() + 1);
-      }
+  // C2
+  let q2new;
+  if (q2 <= 15) {
+    q2new = 0;
+  } else if (q2 <= 30) {
+    q2new = 1;
+  } else if (q2 <= 60) {
+    q2new = 2;
+  } else {
+    q2new = 3;
+  }
 
-      const diffMs = wakeTime - bedTime;
-      const hoursInBed = diffMs / 3600000; // 毫秒轉小時
-      const sleepEfficiency = (q4 / hoursInBed) * 100;
+  const latencySum = q2new + q5a;
+  let c2;
+  if (latencySum === 0) {
+    c2 = 0;
+  } else if (latencySum <= 2) {
+    c2 = 1;
+  } else if (latencySum <= 4) {
+    c2 = 2;
+  } else {
+    c2 = 3;
+  }
 
-      let c4;
-      if (sleepEfficiency >= 85) {
-        c4 = 0;
-      } else if (sleepEfficiency >= 75) {
-        c4 = 1;
-      } else if (sleepEfficiency >= 65) {
-        c4 = 2;
-      } else {
-        c4 = 3;
-      }
+  // C3
+  let c3;
+  if (q4 >= 7) {
+    c3 = 0;
+  } else if (q4 >= 6) {
+    c3 = 1;
+  } else if (q4 >= 5) {
+    c3 = 2;
+  } else {
+    c3 = 3;
+  }
 
-      // C5
-      const disturbanceSum = q5b + q5c + q5d + q5e + q5f + q5g + q5h + q5i + q5j;
-      let c5;
-      if (disturbanceSum === 0) {
-        c5 = 0;
-      } else if (disturbanceSum <= 9) {
-        c5 = 1;
-      } else if (disturbanceSum <= 18) {
-        c5 = 2;
-      } else {
-        c5 = 3;
-      }
+  // C4
+  let bedTime = new Date("2020-01-01T" + q1);
+  let wakeTime = new Date("2020-01-01T" + q3);
+  if (wakeTime <= bedTime) {
+    wakeTime.setDate(wakeTime.getDate() + 1);
+  }
 
-      // C6
-      const c6 = q7;
+  const diffMs = wakeTime - bedTime;
+  const hoursInBed = diffMs / 3600000;
+  const sleepEfficiency = (q4 / hoursInBed) * 100;
 
-      // C7
-      const dysfunctionSum = q8 + q9;
-      let c7;
-      if (dysfunctionSum === 0) {
-        c7 = 0;
-      } else if (dysfunctionSum <= 2) {
-        c7 = 1;
-      } else if (dysfunctionSum <= 4) {
-        c7 = 2;
-      } else {
-        c7 = 3;
-      }
+  let c4;
+  if (sleepEfficiency >= 85) {
+    c4 = 0;
+  } else if (sleepEfficiency >= 75) {
+    c4 = 1;
+  } else if (sleepEfficiency >= 65) {
+    c4 = 2;
+  } else {
+    c4 = 3;
+  }
 
-      const psqiTotal = c1 + c2 + c3 + c4 + c5 + c6 + c7;
+  // C5
+  const disturbanceSum = q5b + q5c + q5d + q5e + q5f + q5g + q5h + q5i + q5j;
+  let c5;
+  if (disturbanceSum === 0) {
+    c5 = 0;
+  } else if (disturbanceSum <= 9) {
+    c5 = 1;
+  } else if (disturbanceSum <= 18) {
+    c5 = 2;
+  } else {
+    c5 = 3;
+  }
 
-      // GDS
-      const reverse = [0, 4, 6, 10, 12];
-      let gdsTotal = 0;
+  // C6
+  const c6 = q7;
 
-      for (let i = 0; i < 15; i++) {
-        const ans = getRadioValue("gds_" + i);
-        let score;
+  // C7
+  const dysfunctionSum = q8 + q9;
+  let c7;
+  if (dysfunctionSum === 0) {
+    c7 = 0;
+  } else if (dysfunctionSum <= 2) {
+    c7 = 1;
+  } else if (dysfunctionSum <= 4) {
+    c7 = 2;
+  } else {
+    c7 = 3;
+  }
 
-        if (reverse.includes(i)) {
-          if (ans === "yes") {
-            score = 0;
-          } else {
-            score = 1;
-          }
-        } else {
-          if (ans === "yes") {
-            score = 1;
-          } else {
-            score = 0;
-          }
-        }
+  const psqiTotal = c1 + c2 + c3 + c4 + c5 + c6 + c7;
 
-        gdsTotal += score;
-      }
+  // GDS
+  const reverse = [0, 4, 6, 10, 12];
+  let gdsTotal = 0;
 
-      let sleepClass, sleepCss;
-      if (psqiTotal <= 5) {
-        sleepClass = "睡眠良好";
-        sleepCss = "risk-green";
-      } else if (psqiTotal <= 10) {
-        sleepClass = "睡眠需注意";
-        sleepCss = "risk-yellow";
-      } else {
-        sleepClass = "睡眠高風險";
-        sleepCss = "risk-red";
-      }
+  for (let i = 0; i < 15; i++) {
+    const ans = getRadioValue("gds_" + i);
+    let score;
 
-      let gdsClass, gdsCss;
-      if (gdsTotal <= 4) {
-        gdsClass = "情緒狀態大致正常";
-        gdsCss = "risk-green";
-      } else if (gdsTotal <= 10) {
-        gdsClass = "有輕度憂鬱風險";
-        gdsCss = "risk-yellow";
-      } else {
-        gdsClass = "有明顯憂鬱風險";
-        gdsCss = "risk-red";
-      }
+    if (reverse.includes(i)) {
+      score = ans === "yes" ? 0 : 1;
+    } else {
+      score = ans === "yes" ? 1 : 0;
+    }
 
-      let advice = [];
-      if (psqiTotal > 5) {
-        advice.push("建議維持規律作息，固定上床與起床時間。");
-        advice.push("睡前避免咖啡、濃茶、酒精與長時間使用手機。");
-      } else {
-        advice.push("目前睡眠狀況尚可，請持續維持良好作息。");
-      }
+    gdsTotal += score;
+  }
 
-      if (gdsTotal >= 5) {
-        advice.push("建議多與家人朋友互動，維持社交支持。");
-        advice.push("若情緒低落持續，建議尋求心理諮詢或就醫評估。");
-      } else {
-        advice.push("目前情緒狀況尚穩定，可持續保持規律生活與活動。");
-      }
+  let sleepClass, sleepCss;
+  if (psqiTotal <= 5) {
+    sleepClass = "睡眠良好";
+    sleepCss = "risk-green";
+  } else if (psqiTotal <= 10) {
+    sleepClass = "睡眠需注意";
+    sleepCss = "risk-yellow";
+  } else {
+    sleepClass = "睡眠高風險";
+    sleepCss = "risk-red";
+  }
 
-      if (psqiTotal > 5 && gdsTotal >= 5) {
-        advice.push("睡眠與情緒皆有風險，建議儘早尋求專業協助。");
-      }
+  let gdsClass, gdsCss;
+  if (gdsTotal <= 4) {
+    gdsClass = "情緒狀態大致正常";
+    gdsCss = "risk-green";
+  } else if (gdsTotal <= 10) {
+    gdsClass = "有輕度憂鬱風險";
+    gdsCss = "risk-yellow";
+  } else {
+    gdsClass = "有明顯憂鬱風險";
+    gdsCss = "risk-red";
+  }
 
-      document.getElementById("result").innerHTML = `
-        <div><strong>年齡：</strong>${age}</div>
-        <div><strong>PSQI 總分：</strong>${psqiTotal}　<span class="${sleepCss}">${sleepClass}</span></div>
-        <div><strong>GDS-15 分數：</strong>${gdsTotal}　<span class="${gdsCss}">${gdsClass}</span></div>
-        <div><strong>睡眠效率：</strong>${sleepEfficiency.toFixed(1)}%</div>
-        <hr>
-        <div><strong>PSQI 7 構面：</strong></div>
-        <div>C1 主觀睡眠品質：${c1}</div>
-        <div>C2 入睡時間：${c2}</div>
-        <div>C3 睡眠時數：${c3}</div>
-        <div>C4 睡眠效率：${c4}</div>
-        <div>C5 睡眠干擾：${c5}</div>
-        <div>C6 睡眠藥物：${c6}</div>
-        <div>C7 日間功能：${c7}</div>
-        <hr>
-        <div><strong>衛教建議：</strong></div>
-        <ul>${advice.map(x => `<li>${x}</li>`).join("")}</ul>
-      `;
+  const advice = [];
+  if (psqiTotal > 5) {
+    advice.push("建議維持規律作息，固定上床與起床時間。");
+    advice.push("睡前避免咖啡、濃茶、酒精與長時間使用手機。");
+  } else {
+    advice.push("目前睡眠狀況尚可，請持續維持良好作息。");
+  }
+
+  if (gdsTotal >= 5) {
+    advice.push("建議多與家人朋友互動，維持社交支持。");
+    advice.push("若情緒低落持續，建議尋求心理諮詢或就醫評估。");
+  } else {
+    advice.push("目前情緒狀態尚穩定，可持續保持規律生活與活動。");
+  }
+
+  if (psqiTotal > 5 && gdsTotal >= 5) {
+    advice.push("睡眠與情緒皆有風險，建議儘早尋求專業協助。");
+  }
+
+  document.getElementById("result").innerHTML = `
+    <div><strong>年齡：</strong>${age}</div>
+    <div><strong>PSQI 總分：</strong>${psqiTotal}　<span class="${sleepCss}">${sleepClass}</span></div>
+    <div><strong>GDS-15 分數：</strong>${gdsTotal}　<span class="${gdsCss}">${gdsClass}</span></div>
+    <div><strong>睡眠效率：</strong>${sleepEfficiency.toFixed(1)}%</div>
+
+    <hr>
+    <div><strong>PSQI 7 構面：</strong></div>
+    <div>C1 主觀睡眠品質：${c1}</div>
+    <div>C2 入睡時間：${c2}</div>
+    <div>C3 睡眠時數：${c3}</div>
+    <div>C4 睡眠效率：${c4}</div>
+    <div>C5 睡眠干擾：${c5}</div>
+    <div>C6 睡眠藥物：${c6}</div>
+    <div>C7 日間功能：${c7}</div>
+
+    <hr>
+    <div><strong>PSQI 原始填答：</strong></div>
+    <div>Q1 上床時間：${q1}</div>
+    <div>Q2 入睡所需時間：${q2} 分鐘</div>
+    <div>Q3 起床時間：${q3}</div>
+    <div>Q4 真正睡著時間：${q4} 小時</div>
+    <div>Q5a 30分鐘內無法入睡：${freqText(q5a)}</div>
+    <div>Q5b 半夜或凌晨醒來：${freqText(q5b)}</div>
+    <div>Q5c 必須起來上廁所：${freqText(q5c)}</div>
+    <div>Q5d 無法順暢呼吸：${freqText(q5d)}</div>
+    <div>Q5e 大聲咳嗽或打呼：${freqText(q5e)}</div>
+    <div>Q5f 覺得太冷：${freqText(q5f)}</div>
+    <div>Q5g 覺得太熱：${freqText(q5g)}</div>
+    <div>Q5h 做惡夢：${freqText(q5h)}</div>
+    <div>Q5i 有疼痛：${freqText(q5i)}</div>
+    <div>Q5j 其他原因：${freqText(q5j)}${q5j_text ? "（" + q5j_text + "）" : ""}</div>
+    <div>Q6 整體睡眠品質：${q6Text(q6)}</div>
+    <div>Q7 服用藥物幫助睡眠：${freqText(q7)}</div>
+    <div>Q8 難以保持清醒：${freqText(q8)}</div>
+    <div>Q9 維持做事動力困難：${q9Text(q9)}</div>
+
+    <hr>
+    <div><strong>GDS-15 原始填答：</strong></div>
+    <div>1. 對生活滿意：${getRadioValue("gds_0") === "yes" ? "是" : "否"}</div>
+    <div>2. 減少很多活動和興趣：${getRadioValue("gds_1") === "yes" ? "是" : "否"}</div>
+    <div>3. 覺得生活很空虛：${getRadioValue("gds_2") === "yes" ? "是" : "否"}</div>
+    <div>4. 常常感到厭煩：${getRadioValue("gds_3") === "yes" ? "是" : "否"}</div>
+    <div>5. 大部分時間精神很好：${getRadioValue("gds_4") === "yes" ? "是" : "否"}</div>
+    <div>6. 常常害怕將有不幸事情發生在您身上：${getRadioValue("gds_5") === "yes" ? "是" : "否"}</div>
+    <div>7. 大部分時間都感到快樂：${getRadioValue("gds_6") === "yes" ? "是" : "否"}</div>
+    <div>8. 常常感到無論做什麼事都沒有用：${getRadioValue("gds_7") === "yes" ? "是" : "否"}</div>
+    <div>9. 比較喜歡待在家裡：${getRadioValue("gds_8") === "yes" ? "是" : "否"}</div>
+    <div>10. 覺得有記憶力不好的困擾：${getRadioValue("gds_9") === "yes" ? "是" : "否"}</div>
+    <div>11. 覺得現在還能活著是很好的事：${getRadioValue("gds_10") === "yes" ? "是" : "否"}</div>
+    <div>12. 覺得現在活得很沒有價值：${getRadioValue("gds_11") === "yes" ? "是" : "否"}</div>
+    <div>13. 覺得精力很充沛：${getRadioValue("gds_12") === "yes" ? "是" : "否"}</div>
+    <div>14. 感覺現在的情況沒有希望：${getRadioValue("gds_13") === "yes" ? "是" : "否"}</div>
+    <div>15. 覺得大部分的人都比自己更幸福：${getRadioValue("gds_14") === "yes" ? "是" : "否"}</div>
+
+    <hr>
+    <div><strong>衛教建議：</strong></div>
+    <ul>${advice.map(x => `<li>${x}</li>`).join("")}</ul>
+  `;
+   
+      showPage(5);   
 
       // Google Sheet upload
       const scriptURL = "https://script.google.com/macros/s/AKfycbzpgAToLBHhioPmvNnFcRHj_myzT4MyxMoxOh9QqlrBgaTd6OI1RsgaapDf6Rfdx5EF/exec";
@@ -636,7 +693,6 @@
         }).catch(err => console.log("上傳失敗：", err));
       }
 
-      showPage(5);
     }  </script>
 </body>
 </html>
