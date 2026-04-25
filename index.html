@@ -114,6 +114,7 @@
         display: block;
         margin-right: 0;
       }
+      input[type="text"],
       input[type="number"],
       input[type="time"],
       textarea {
@@ -137,6 +138,8 @@
       <h2>第 1 頁｜基本資料與睡眠時間</h2>
 
       <div class="question">
+        <div>姓名<span class="required">*</span></div>
+        <input type="text" id="name">
         <div>年齡 <span class="required">*</span></div>
         <input type="number" id="age" min="1" max="120">
       </div>
@@ -381,7 +384,7 @@
     }
 
     function validateAll() {
-      const requiredIds = ["age", "q1", "q2", "q3", "q4"];
+      const requiredIds = ["name", "age", "q1", "q2", "q3", "q4"];
       for (const id of requiredIds) {
         if (!document.getElementById(id).value) {
           alert("請完成所有必填題目。");
@@ -410,7 +413,8 @@
     function calculateAll() {
       if (!validateAll()) return;
 
-        const age = parseInt(document.getElementById("age").value, 10);
+      const name = document.getElementById("name").value.trim();  
+      const age = parseInt(document.getElementById("age").value, 10);
   const q1 = document.getElementById("q1").value;
   const q2 = parseFloat(document.getElementById("q2").value);
   const q3 = document.getElementById("q3").value;
@@ -606,7 +610,8 @@
     advice.push("睡眠與情緒皆有風險，建議儘早尋求專業協助。");
   }
 
-  document.getElementById("result").innerHTML = `
+ document.getElementById("result").innerHTML = `
+    <div><strong>姓名：</strong>${name}</div>
     <div><strong>年齡：</strong>${age}</div>
     <div><strong>PSQI 總分：</strong>${psqiTotal}　<span class="${sleepCss}">${sleepClass}</span></div>
     <div><strong>GDS-15 分數：</strong>${gdsTotal}　<span class="${gdsCss}">${gdsClass}</span></div>
